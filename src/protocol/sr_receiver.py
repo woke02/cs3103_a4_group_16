@@ -3,7 +3,7 @@ import threading
 from . import packet as pkt
 
 WINDOW_SIZE = 32
-DEFAULT_RECEIVER_SKIP_TIMEOUT = 0.100
+DEFAULT_RECEIVER_SKIP_TIMEOUT = 0.450
 
 
 class BufferedPacket:

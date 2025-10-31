@@ -9,7 +9,7 @@ from protocol.unreliable_receiver import UnreliableReceiver
 
 
 class GameNetAPI:
-    def __init__(self, role, local_port, remote_addr=None, sender_timeout=0.200, receiver_timeout=0.200):
+    def __init__(self, role, local_port, remote_addr=None, sender_timeout=0.200, receiver_timeout=0.450):
         self.role = role
         self.remote_addr = remote_addr
         self.sender_timeout = sender_timeout
