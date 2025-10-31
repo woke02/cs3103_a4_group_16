@@ -3,8 +3,8 @@ import threading
 from . import packet as pkt
 
 WINDOW_SIZE = 32
-RETRY_INTERVAL = 0.050
-DEFAULT_TOTAL_TIMEOUT = 0.200
+RETRY_INTERVAL = 0.200
+MAX_RETRIES = 1
 
 
 class PacketInfo:
@@ -18,7 +18,7 @@ class PacketInfo:
 
 
 class SRSender:
-    def __init__(self, socket, remote_addr, sender_timeout=DEFAULT_TOTAL_TIMEOUT):
+    def __init__(self, socket, remote_addr, sender_timeout=RETRY_INTERVAL):
         self.socket = socket
         self.remote_addr = remote_addr
         self.sender_timeout = sender_timeout
@@ -97,10 +97,9 @@ class SRSender:
             
             pkt_info = self.send_buffer[seq_no]
             
-            elapsed = time.time() - pkt_info.first_send_time
-            
-            if elapsed >= self.sender_timeout:
-                print(f"[SR_SENDER] SKIP seq={seq_no} (elapsed={elapsed*1000:.0f}ms, retries={pkt_info.retry_count})")
+            if pkt_info.retry_count >= MAX_RETRIES:
+                elapsed = time.time() - pkt_info.first_send_time
+                print(f"[SR_SENDER] SKIP seq={seq_no} (max retries reached, elapsed={elapsed*1000:.0f}ms)")
                 
                 pkt_info.skipped = True
                 
@@ -118,9 +117,10 @@ class SRSender:
                 
                 self.socket.sendto(pkt_info.packet, self.remote_addr)
                 
+                elapsed = time.time() - pkt_info.first_send_time
                 print(f"[SR_SENDER] RETRY seq={seq_no} (attempt={pkt_info.retry_count}, elapsed={elapsed*1000:.0f}ms)")
                 
-                timer = threading.Timer(RETRY_INTERVAL, self._on_timeout, args=[seq_no])
+                timer = threading.Timer(self.sender_timeout, self._on_timeout, args=[seq_no])
                 timer.daemon = True
                 timer.start()
                 self.timers[seq_no] = timer
