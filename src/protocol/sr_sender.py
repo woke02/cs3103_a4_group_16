@@ -9,6 +9,13 @@ MAX_RETRIES = 1
 
 class PacketInfo:
     def __init__(self, packet_bytes):
+        """
+        Initialize packet information
+        
+        Args: packey_bytes:Encoded packet data for transmission
+        Returns: None
+
+        """
         self.packet = packet_bytes
         self.first_send_time = time.time()
         self.last_send_time = self.first_send_time
@@ -19,6 +26,16 @@ class PacketInfo:
 
 class SRSender:
     def __init__(self, socket, remote_addr, sender_timeout=RETRY_INTERVAL):
+        """
+        Initialize the Selective Repeat sender.
+
+        Args:
+            socket: UDP socket object for sending packets
+            remote_addr: Remote address
+            sender_timeout: Timeout interval for retransmissions in seconds
+        Returns:
+            None
+        """
         self.socket = socket
         self.remote_addr = remote_addr
         self.sender_timeout = sender_timeout
@@ -36,6 +53,16 @@ class SRSender:
     
     
     def send(self, payload):
+        """
+        Send payload using Selective Repeat protocol with flow control.
+        
+        Args:
+            payload : Raw bytes to send as packet payload
+        
+        Returns:
+            int: Sequence number assigned to packet if successful
+            None: If window is full (flow control blocking)
+        """
         with self.lock:
             used = (self.next_seq - self.send_base) % pkt.MAX_SEQ_NUM
             if used >= WINDOW_SIZE:
@@ -63,6 +90,15 @@ class SRSender:
     
     
     def on_ack(self, ack_no):
+        """
+        Process received ACK and manage sliding window.
+        
+        Args:
+            ack_no: Sequence number being acknowledged
+        
+        Returns:
+            None
+        """
         with self.lock:
             if ack_no in self.acked:
                 print(f"[SR_SENDER] Duplicate ACK {ack_no}")
@@ -91,6 +127,15 @@ class SRSender:
     
     
     def _on_timeout(self, seq_no):
+        """
+        Handle packet timeout - retry or skip based on H-UDP policy.
+        
+        Args:
+            seq_no: Sequence number of timed-out packet
+        
+        Returns:
+            None
+        """
         with self.lock:
             if seq_no in self.acked or seq_no not in self.send_buffer:
                 return
@@ -127,6 +172,16 @@ class SRSender:
     
     
     def _slide_window(self):
+        """
+        Advance sliding window base to next unACKed packet.
+        
+        Args:
+            None
+        
+        Returns:
+            None
+
+        """
         old_base = self.send_base
         
         while self.send_base in self.acked or self.send_base not in self.send_buffer:

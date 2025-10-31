@@ -9,14 +9,26 @@ MAX_PAYLOAD_SIZE = 1391
 MAX_SEQ_NUM = 65536
 
 
-def encode_data_packet(channel_type, seq_no, payload):
+def encode_data_packet(channel_type, seq_no, payload, timestamp=None):
+    """
+    Encode data packet with optional timestamp.
+    
+    Args:
+        channel_type: Channel type (0=reliable, 1=unreliable)
+        seq_no: Sequence number
+        payload: Packet payload bytes
+        timestamp: Optional timestamp (if None, uses current time)
+    
+    Returns:
+        bytes: Encoded packet ready for transmission
+    """
     if isinstance(payload, str):
         payload = payload.encode('utf-8')
     
     if len(payload) > MAX_PAYLOAD_SIZE:
         raise ValueError(f"Payload too large: {len(payload)} > {MAX_PAYLOAD_SIZE}")
-    
-    timestamp = int(time.time() * 1000) & 0xFFFFFFFF
+    if timestamp is None:
+        timestamp = int(time.time() * 1000) & 0xFFFFFFFF
     
     header = struct.pack('!BHIH', 
                         channel_type,
