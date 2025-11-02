@@ -109,11 +109,23 @@ class GameNetAPI:
                 
             except socket.timeout:
                 continue
+            except ConnectionResetError:
+                if self.running:
+                    print(f"[SENDER_RECV] Receiver disconnected")
+                continue
+            except OSError as e:
+                if e.winerror == 10054:  # Connection forcibly closed by remote host
+                    if self.running:
+                        print(f"[SENDER_RECV] Receiver disconnected (Windows error 10054)")
+                    continue
+                else:
+                    if self.running:
+                        print(f"[SENDER_RECV] Socket error: {e}")
+                continue
             except Exception as e:
                 if self.running:
-                    print(f"[SENDER_RECV] Error: {e}")
-    
-    
+                    print(f"[SENDER_RECV] Unexpected error: {e}")
+
     # RECEIVE API
     def receive(self, timeout=None):
         if self.role != 'receiver':
@@ -144,9 +156,22 @@ class GameNetAPI:
                 
             except socket.timeout:
                 continue
+            except ConnectionResetError:
+                if self.running:
+                    print(f"[RECEIVER_RECV] Sender disconnected")
+                continue
+            except OSError as e:
+                if e.winerror == 10054:  # Connection forcibly closed by remote host
+                    if self.running:
+                        print(f"[RECEIVER_RECV] Sender disconnected (Windows error 10054)")
+                    continue
+                else:
+                    if self.running:
+                        print(f"[RECEIVER_RECV] Socket error: {e}")
+                continue
             except Exception as e:
                 if self.running:
-                    print(f"[RECEIVER_RECV] Error: {e}")
+                    print(f"[RECEIVER_RECV] Unexpected error: {e}")
     
     
     def _on_delivery(self, packet_info, channel):
