@@ -1,11 +1,11 @@
 import socket
 import threading
 import queue
-from protocol import packet as pkt
-from protocol.sr_sender import SRSender
-from protocol.sr_receiver import SRReceiver
-from protocol.unreliable_sender import UnreliableSender
-from protocol.unreliable_receiver import UnreliableReceiver
+from .protocol import packet as pkt
+from .protocol.sr_sender import SRSender
+from .protocol.sr_receiver import SRReceiver
+from .protocol.unreliable_sender import UnreliableSender
+from .protocol.unreliable_receiver import UnreliableReceiver
 
 
 class GameNetAPI:
