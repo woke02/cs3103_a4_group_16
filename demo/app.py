@@ -12,6 +12,7 @@ The application uses threading to run network operations without blocking the UI
 It integrates with the GameNetAPI from src/game_net_api.py.
 """
 
+
 import json
 import logging
 import os
@@ -31,8 +32,8 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 # Import the H-UDP API
-from src.game_net_api import GameNetAPI
 from src.protocol import packet as pkt
+from src.game_net_api import GameNetAPI
 
 class HUDPApp:
     """
@@ -69,6 +70,11 @@ class HUDPApp:
             'received_unreliable': 0,
             'total_latency': 0,
             'latency_count': 0,
+            'bytes_sent_reliable': 0,
+            'bytes_sent_unreliable': 0,
+            'bytes_received_reliable': 0,
+            'bytes_received_unreliable': 0,
+            'start_time': None,  # Will be set when operation starts
         }
 
         # --- UI Setup ---
@@ -186,15 +192,16 @@ class HUDPApp:
             role_frame, textvariable=self.receiver_timeout_var, width=10)
         self.receiver_timeout_entry.grid(
             row=2, column=3, padx=5, pady=5, sticky="w")
-        
+
         # Log filename field
         ttk.Label(role_frame, text="Log Filename:").grid(
             row=2, column=4, padx=5, pady=5, sticky="w")
-        
+
         self.log_filename_var = tk.StringVar(value=config.SENDER_LOG_FILE)
         self.log_filename_entry = ttk.Entry(
             role_frame, textvariable=self.log_filename_var, width=15)
-        self.log_filename_entry.grid(row=2, column=5, padx=5, pady=5, sticky="w")
+        self.log_filename_entry.grid(
+            row=2, column=5, padx=5, pady=5, sticky="w")
 
         # Log Level selection
         ttk.Label(role_frame, text="Log Level:").grid(
@@ -221,18 +228,18 @@ class HUDPApp:
         self.log_level_menu = ttk.OptionMenu(
             role_frame, self.log_level_var, current_level_name, *self.log_level_names)
         self.log_level_menu.grid(row=3, column=1, padx=5, pady=5, sticky="w")
-        
-
 
         # Initialize button
         self.btn_initialize = ttk.Button(
             role_frame, text="Initialize", command=self.initialize_api)
-        self.btn_initialize.grid(row=3, column=2, columnspan=2, padx=5, pady=5, sticky="w")
+        self.btn_initialize.grid(
+            row=3, column=2, columnspan=2, padx=5, pady=5, sticky="w")
 
         # Status label
         self.status_label = ttk.Label(role_frame, text="Status: Not Initialized",
                                       foreground="red")
-        self.status_label.grid(row=3, column=4, columnspan=2, padx=5, pady=5, sticky="w")
+        self.status_label.grid(
+            row=3, column=4, columnspan=2, padx=5, pady=5, sticky="w")
 
         # Configure column weights
         role_frame.columnconfigure(0, weight=0)
@@ -244,8 +251,9 @@ class HUDPApp:
         self.on_role_change()
 
     def create_control_frame(self, parent: ttk.Frame):
-        """Creates the control buttons frame."""
-        control_frame = ttk.LabelFrame(parent, text="2. Control", padding="10")
+        """Creates the sender control buttons frame."""
+        control_frame = ttk.LabelFrame(
+            parent, text="2. Sender Control", padding="10")
         control_frame.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
 
         self.btn_start = ttk.Button(
@@ -258,14 +266,19 @@ class HUDPApp:
             state="disabled")
         self.btn_stop.grid(row=0, column=1, padx=5, pady=5)
 
+        self.btn_send_one = ttk.Button(
+            control_frame, text="Send One Packet", command=self.send_one_packet,
+            state="disabled")
+        self.btn_send_one.grid(row=0, column=2, padx=5, pady=5)
+
         ttk.Label(control_frame, text="Send Interval (ms):").grid(
-            row=0, column=2, padx=5, pady=5)
+            row=0, column=3, padx=5, pady=5)
 
         self.interval_var = tk.StringVar(
             value=str(int(config.PACKET_INTERVAL_SEC * 1000)))
         self.interval_entry = ttk.Entry(control_frame, textvariable=self.interval_var,
                                         width=10)
-        self.interval_entry.grid(row=0, column=3, padx=5, pady=5)
+        self.interval_entry.grid(row=0, column=4, padx=5, pady=5)
 
     def create_payload_frame(self, parent: ttk.Frame):
         """Creates the payload configuration frame."""
@@ -342,9 +355,21 @@ class HUDPApp:
         stats_frame = ttk.LabelFrame(parent, text="Statistics", padding="10")
         stats_frame.grid(row=3, column=0, padx=5, pady=5, sticky="ew")
 
-        self.stats_text = tk.Text(stats_frame, height=2, width=80,
+        self.stats_text = tk.Text(stats_frame, height=3, width=80,
                                   state="disabled")
-        self.stats_text.grid(row=0, column=0, sticky="ew")
+        self.stats_text.grid(row=0, column=0, columnspan=2, sticky="ew")
+
+        # Buttons frame for Reset and Show PDR
+        btn_frame = ttk.Frame(stats_frame)
+        btn_frame.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+
+        self.btn_reset_stats = ttk.Button(
+            btn_frame, text="Reset Statistics", command=self.reset_statistics)
+        self.btn_reset_stats.pack(side="left", padx=(0, 5))
+
+        self.btn_show_pdr = ttk.Button(
+            btn_frame, text="Show PDR Stats", command=self.show_pdr_stats)
+        self.btn_show_pdr.pack(side="left")
 
         stats_frame.columnconfigure(0, weight=1)
 
@@ -474,7 +499,7 @@ class HUDPApp:
 
             if sender_timeout <= 0 or receiver_timeout <= 0:
                 raise ValueError("Timeouts must be positive values")
-            
+
             # Validate log filename
             log_filename = self.log_filename_var.get().strip()
             if not log_filename:
@@ -523,10 +548,11 @@ class HUDPApp:
                              f"sender_timeout={sender_timeout}s, receiver_timeout={receiver_timeout}s")
 
             # Apply the selected log level
-            selected_log_level = self.log_level_values[self.log_level_var.get()]
+            selected_log_level = self.log_level_values[self.log_level_var.get(
+            )]
             logging.getLogger().setLevel(selected_log_level)
             logging.info(f"Log level set to {self.log_level_var.get()}")
-            
+
             # Add file logging now that role is set
             self.add_file_logging()
 
@@ -547,7 +573,18 @@ class HUDPApp:
                 foreground="green")
             # Change button text and disable it (macOS ttk doesn't always show visual disabled state)
             self.btn_initialize.config(text="✓ Initialized", state="disabled")
-            self.btn_start.config(state="normal")
+
+            # Enable start/stop only for sender
+            if self.role == 'sender':
+                self.btn_start.config(state="normal")
+                self.btn_send_one.config(state="normal")
+            else:
+                # Receiver doesn't need start/stop buttons
+                self.btn_start.config(state="disabled")
+                self.btn_stop.config(state="disabled")
+                self.btn_send_one.config(state="disabled")
+                # Auto-start receiver (it runs continuously)
+                self.start_receiver()
 
         except Exception as e:
             logging.error(f"Failed to initialize API: {e}")
@@ -555,46 +592,124 @@ class HUDPApp:
                                  f"Failed to initialize API:\n{e}")
 
     def start_operation(self):
-        """Starts the sender or receiver operation."""
+        """Starts the sender operation (automatic sending)."""
         if self.api is None:
             messagebox.showwarning(
                 "Not Initialized", "Please initialize first.")
             return
 
-        if self.role == 'sender':
-            self.start_sender()
-        else:
-            self.start_receiver()
+        if self.role != 'sender':
+            return
+
+        self.start_sender()
 
         # Update button states with visual feedback
         self.btn_start.config(text="▶ Running", state="disabled")
         self.btn_stop.config(text="Stop", state="normal")
 
     def stop_operation(self):
-        """Stops the sender or receiver operation."""
-        if self.role == 'sender' and self.sender_thread:
+        """Stops the sender operation (automatic sending)."""
+        if self.role != 'sender':
+            # This shouldn't happen since button is disabled for receiver
+            return
+
+        if self.sender_thread:
             logging.info("Stopping sender...")
-            # Thread will check self.running flag and exit
-        elif self.role == 'receiver' and self.receiver_thread:
-            logging.info("Stopping receiver...")
 
         self.running = False
+
         # Update button states with visual feedback
         self.btn_start.config(text="Start", state="normal")
         self.btn_stop.config(text="■ Stopped", state="disabled")
 
+    def send_one_packet(self):
+        """Sends a single packet with the current payload configuration."""
+        if self.api is None:
+            messagebox.showwarning(
+                "Not Initialized", "Please initialize first.")
+            return
+
+        if self.role != 'sender':
+            # This shouldn't happen since button is disabled for receiver
+            return
+
+        try:
+            # Get payload from UI
+            payload_text = self.payload_text.get(1.0, tk.END).strip()
+
+            if not payload_text:
+                logging.warning("Empty payload, cannot send.")
+                messagebox.showwarning(
+                    "Empty Payload", "Please enter a payload to send.")
+                return
+
+            # Determine reliability
+            reliability_choice = self.reliability_var.get()
+
+            if reliability_choice == "auto":
+                is_reliable = config.get_suggested_reliability(payload_text)
+            elif reliability_choice == "reliable":
+                is_reliable = True
+            else:  # unreliable
+                is_reliable = False
+
+            # Convert to bytes
+            payload_bytes = payload_text.encode('utf-8')
+
+            # Check payload size
+            if len(payload_bytes) > pkt.MAX_PAYLOAD_SIZE:
+                logging.error(
+                    f"Payload too large: {len(payload_bytes)} bytes > {pkt.MAX_PAYLOAD_SIZE} bytes")
+                messagebox.showerror(
+                    "Payload Too Large",
+                    f"Payload size ({len(payload_bytes)}B) exceeds maximum ({pkt.MAX_PAYLOAD_SIZE}B)")
+                return
+
+            # Send via API
+            seq_no = self.api.send(payload_bytes, reliable=is_reliable)
+
+            # Log what we're sending
+            payload_preview = payload_text[:50] + \
+                "..." if len(payload_text) > 50 else payload_text
+            logging.info(f"[SENDING ONE] Seq={seq_no}, Reliable={is_reliable}, "
+                         f"Size={len(payload_bytes)}B, Payload={payload_preview}")
+
+            # Update statistics
+            if is_reliable:
+                self.stats['sent_reliable'] += 1
+                self.stats['bytes_sent_reliable'] += len(payload_bytes)
+            else:
+                self.stats['sent_unreliable'] += 1
+                self.stats['bytes_sent_unreliable'] += len(payload_bytes)
+
+            # Initialize start_time if this is the first packet
+            if self.stats['start_time'] is None:
+                self.stats['start_time'] = time.time()
+
+            self.update_stats_display()
+
+        except Exception as e:
+            logging.error(f"Failed to send packet: {e}")
+            messagebox.showerror("Send Error", f"Failed to send packet:\n{e}")
+
     # ========================================================================
-    # SENDER LOGIC
     # ========================================================================
 
     def start_sender(self):
         """Starts the sender loop in a separate thread."""
         self.running = True
-        self.sender_thread = threading.Thread(
-            target=self.sender_loop, daemon=True)
-        self.sender_thread.start()
-        print("Sender thread started.")
-        logging.info("Sender thread started.")
+
+        # Reset start time only if this is the first start (not a resume)
+        if self.stats['start_time'] is None:
+            self.stats['start_time'] = time.time()
+
+        # Start sender thread if not already running
+        if self.sender_thread is None or not self.sender_thread.is_alive():
+            self.sender_thread = threading.Thread(
+                target=self.sender_loop, daemon=True)
+            self.sender_thread.start()
+            print("Sender thread started.")
+            logging.info("Sender thread started.")
 
     def sender_loop(self):
         """
@@ -640,12 +755,6 @@ class HUDPApp:
                     time.sleep(interval_sec)
                     continue
 
-                # Log what we're sending
-                payload_preview = payload_text[:50] + \
-                    "..." if len(payload_text) > 50 else payload_text
-                logging.info(f"[SENDING] Reliable={is_reliable}, Size={len(payload_bytes)}B, "
-                             f"Payload={payload_preview}")
-
                 # Send via API
                 if self.api is None:
                     logging.error("API not initialized, cannot send.")
@@ -653,11 +762,19 @@ class HUDPApp:
                     continue
                 seq_no = self.api.send(payload_bytes, reliable=is_reliable)
 
+                # Log what we're sending
+                payload_preview = payload_text[:50] + \
+                    "..." if len(payload_text) > 50 else payload_text
+                logging.info(f"[SENDING] Seq={seq_no}, Reliable={is_reliable}, "
+                             f"Size={len(payload_bytes)}B, Payload={payload_preview}")
+
                 # Update statistics
                 if is_reliable:
                     self.stats['sent_reliable'] += 1
+                    self.stats['bytes_sent_reliable'] += len(payload_bytes)
                 else:
                     self.stats['sent_unreliable'] += 1
+                    self.stats['bytes_sent_unreliable'] += len(payload_bytes)
 
                 self.update_stats_display()
 
@@ -675,8 +792,10 @@ class HUDPApp:
     # ========================================================================
 
     def start_receiver(self):
-        """Starts the receiver loop in a separate thread."""
+        """Starts the receiver loop in a separate thread (called automatically on init)."""
         self.running = True
+        self.stats['start_time'] = time.time()
+
         self.receiver_thread = threading.Thread(
             target=self.receiver_loop, daemon=True)
         self.receiver_thread.start()
@@ -720,8 +839,10 @@ class HUDPApp:
                     # Update statistics
                     if is_reliable:
                         self.stats['received_reliable'] += 1
+                        self.stats['bytes_received_reliable'] += len(payload)
                     else:
                         self.stats['received_unreliable'] += 1
+                        self.stats['bytes_received_unreliable'] += len(payload)
 
                     self.stats['total_latency'] += latency
                     self.stats['latency_count'] += 1
@@ -768,23 +889,24 @@ class HUDPApp:
         queue_handler = QueueHandler(self.log_queue)
         queue_handler.setFormatter(self.log_formatter)
         logger.addHandler(queue_handler)
-    
+
     def add_file_logging(self):
         """Adds file logging handler using the user-specified filename."""
         logger = logging.getLogger()
-        
+
         # Use the filename from the UI field
         log_file = self.log_filename_var.get().strip()
 
         # Create logs directory in the directory where the script is run
         logs_dir = os.path.join(os.getcwd(), 'logs')
         os.makedirs(logs_dir, exist_ok=True)
-        
+
         # Add file handler
-        file_handler = logging.FileHandler(os.path.join(logs_dir, log_file), mode='w')
+        file_handler = logging.FileHandler(
+            os.path.join(logs_dir, log_file), mode='w')
         file_handler.setFormatter(self.log_formatter)
         logger.addHandler(file_handler)
-        
+
         logging.info(f"File logging enabled: {log_file}")
 
     def process_log_queue(self):
@@ -849,26 +971,144 @@ class HUDPApp:
     # STATISTICS
     # ========================================================================
 
+    def reset_statistics(self):
+        """Resets all statistics counters."""
+        self.stats = {
+            'sent_reliable': 0,
+            'sent_unreliable': 0,
+            'received_reliable': 0,
+            'received_unreliable': 0,
+            'total_latency': 0,
+            'latency_count': 0,
+            'bytes_sent_reliable': 0,
+            'bytes_sent_unreliable': 0,
+            'bytes_received_reliable': 0,
+            'bytes_received_unreliable': 0,
+            'start_time': time.time() if self.running else None,  # Reset timer if running
+        }
+
+        # Clear API tracking data (sent/received packet files)
+        if self.api:
+            try:
+                self.api.clear_tracking_data()
+                logging.info("API tracking data cleared.")
+            except Exception as e:
+                logging.error(f"Failed to clear API tracking data: {e}")
+
+        self.update_stats_display()
+        logging.info("Statistics reset.")
+
     def update_stats_display(self):
-        """Updates the statistics display."""
+        """Updates the statistics display (without PDR - use Show PDR button for that)."""
         avg_latency = (self.stats['total_latency'] / self.stats['latency_count']
                        if self.stats['latency_count'] > 0 else 0)
 
-        stats_text = (
-            f"Sent Reliable: {self.stats['sent_reliable']}  |  "
-            f"Sent Unreliable: {self.stats['sent_unreliable']}  |  "
-            f"Received Reliable: {self.stats['received_reliable']}  |  "
-            f"Received Unreliable: {self.stats['received_unreliable']}\n"
-            f"Average Latency: {avg_latency:.2f}ms  |  "
-            f"Total Packets: {self.stats['sent_reliable'] + self.stats['sent_unreliable'] +
-                              self.stats['received_reliable'] + self.stats['received_unreliable']}"
-        )
+        # Calculate duration
+        duration = time.time() - \
+            self.stats['start_time'] if self.stats['start_time'] else 0
+
+        # Calculate throughput (bytes/second) for each channel (receiver only)
+        throughput_reliable = (self.stats['bytes_received_reliable'] / duration
+                               if duration > 0 else 0)
+        throughput_unreliable = (self.stats['bytes_received_unreliable'] / duration
+                                 if duration > 0 else 0)
+
+        # Build stats text based on role (without PDR)
+        if self.role == 'sender':
+            stats_text = (
+                f"Sent Reliable: {self.stats['sent_reliable']} ({self.stats['bytes_sent_reliable']}B)  |  "
+                f"Sent Unreliable: {self.stats['sent_unreliable']} ({self.stats['bytes_sent_unreliable']}B)\n"
+                f"Duration: {duration:.2f}s"
+            )
+        else:  # receiver
+            stats_text = (
+                f"Received Reliable: {self.stats['received_reliable']} ({self.stats['bytes_received_reliable']}B)  |  "
+                f"Received Unreliable: {self.stats['received_unreliable']} ({self.stats['bytes_received_unreliable']}B)\n"
+                f"Throughput: Reliable={throughput_reliable:.2f} B/s, Unreliable={throughput_unreliable:.2f} B/s\n"
+                f"Average Latency: {avg_latency:.2f}ms  |  Duration: {duration:.2f}s"
+            )
 
         self.stats_text.config(state="normal")
         self.stats_text.delete(1.0, tk.END)
         self.stats_text.insert(1.0, stats_text)
         self.stats_text.config(state="disabled")
 
+    def show_pdr_stats(self):
+        """Shows PDR statistics in a popup window."""
+        if self.api is None:
+            messagebox.showwarning(
+                "Not Initialized", "Please initialize first.")
+            return
+
+        try:
+            # Get delivery stats from API
+            delivery_stats = self.api.get_delivery_stats()
+
+            # Create popup window
+            pdr_window = tk.Toplevel(self.root)
+            pdr_window.title("Packet Delivery Ratio Statistics")
+            pdr_window.geometry("500x400")
+
+            # Create text widget with scrollbar
+            text_frame = ttk.Frame(pdr_window, padding="10")
+            text_frame.pack(fill="both", expand=True)
+
+            pdr_text = scrolledtext.ScrolledText(
+                text_frame, height=20, width=70, wrap=tk.WORD)
+            pdr_text.pack(fill="both", expand=True)
+
+            # Format PDR statistics
+            separator = "=" * 60
+            line = "-" * 60
+
+            pdr_info = (
+                f"{separator}\n"
+                f"PACKET DELIVERY RATIO (PDR) STATISTICS\n"
+                f"{separator}\n\n"
+                f"Total Packets Sent: {delivery_stats['total_sent']}\n"
+                f"Total Packets Received: {delivery_stats['total_received']}\n"
+                f"Overall PDR: {delivery_stats['overall_delivery_ratio']:.2f}%\n\n"
+                f"{line}\n"
+                f"RELIABLE CHANNEL:\n"
+                f"{line}\n"
+                f"  Sent: {delivery_stats['reliable_sent']}\n"
+                f"  Received: {delivery_stats['reliable_received']}\n"
+                f"  PDR: {delivery_stats['reliable_delivery_ratio']:.2f}%\n\n"
+                f"{line}\n"
+                f"UNRELIABLE CHANNEL:\n"
+                f"{line}\n"
+                f"  Sent: {delivery_stats['unreliable_sent']}\n"
+                f"  Received: {delivery_stats['unreliable_received']}\n"
+                f"  PDR: {delivery_stats['unreliable_delivery_ratio']:.2f}%\n\n"
+                f"{line}\n"
+                f"LOST PACKETS: {len(delivery_stats['lost_packets'])}\n"
+                f"{line}\n"
+            )
+
+            # Add lost packet details if any
+            if delivery_stats['lost_packets']:
+                pdr_info += "\nLost Packet Details:\n"
+                # Show first 50
+                for i, lost_pkt in enumerate(delivery_stats['lost_packets'][:50], 1):
+                    channel = "Reliable" if lost_pkt['reliable'] else "Unreliable"
+                    pdr_info += f"  {i}. Seq={lost_pkt['seq_no']}, Channel={channel}\n"
+                if len(delivery_stats['lost_packets']) > 50:
+                    pdr_info += f"\n  ... and {len(delivery_stats['lost_packets']) - 50} more\n"
+
+            # Insert text
+            pdr_text.insert(1.0, pdr_info)
+            pdr_text.config(state="disabled")
+
+            # Close button
+            ttk.Button(pdr_window, text="Close",
+                       command=pdr_window.destroy).pack(pady=10)
+
+            logging.info("PDR statistics window opened.")
+
+        except Exception as e:
+            logging.error(f"Failed to get PDR stats: {e}")
+            messagebox.showerror(
+                "Error", f"Failed to get PDR statistics:\n{e}")
     # ========================================================================
     # CLEANUP
     # ========================================================================

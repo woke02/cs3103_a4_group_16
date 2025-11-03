@@ -29,7 +29,7 @@ def example_sender():
         local_port=5000,
         remote_addr=('localhost', 6000),
         sender_timeout=0.200,
-        receiver_timeout=0.450
+        receiver_timeout=0.200
     )
     
     print("\nSender initialized. Sending packets...\n")
@@ -91,7 +91,7 @@ def example_receiver():
         role='receiver',
         local_port=6000,
         sender_timeout=0.200,
-        receiver_timeout=0.450
+        receiver_timeout=0.200
     )
     
     print("\nReceiver initialized. Waiting for packets...\n")

@@ -21,7 +21,7 @@ HOST = 'localhost'
 
 # Default protocol timeout parameters (in seconds)
 SENDER_TIMEOUT = 0.200   # Retry interval for reliable packets
-RECEIVER_TIMEOUT = 0.450  # Skip timeout for missing packets
+RECEIVER_TIMEOUT = 0.200  # Skip timeout for missing packets
 
 # Default packet sending interval (in seconds)
 PACKET_INTERVAL_SEC = 0.5  # Send a packet every 500ms
