@@ -70,9 +70,10 @@ class SRReceiver:
                 
             else:
                 self.rcv_buffer[seq_no] = BufferedPacket(payload, timestamp)
-                
-                if self.rcv_base not in self.waiting_since:
-                    self.waiting_since[self.rcv_base] = time.time()
+
+                for seq in range(self.rcv_base, seq_no):
+                    if seq not in self.rcv_buffer and seq not in self.waiting_since:
+                        self.waiting_since[seq] = time.time()
                 
                 print(f"[SR_RECEIVER] BUFFER seq={seq_no} (waiting for {self.rcv_base}, buffer_size={len(self.rcv_buffer)})")
     
