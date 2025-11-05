@@ -4,6 +4,7 @@ import queue
 import time
 import json
 import os
+import statistics
 from .protocol import packet as pkt
 from .protocol.sr_sender import SRSender
 from .protocol.sr_receiver import SRReceiver
@@ -181,7 +182,8 @@ class GameNetAPI:
             self.received_packets[packet_info['seq_no']] = {
                 'timestamp': time.time(),
                 'reliable': (channel == 'reliable'),
-                'latency': packet_info['latency']
+                'latency': packet_info['latency'],
+                'size': len(packet_info['payload']),
             }
             self._save_tracking_data()
         
@@ -205,6 +207,8 @@ class GameNetAPI:
             if end_time is not None:
                 all_sent = {k: v for k, v in all_sent.items() if v.get('timestamp', 0) <= end_time}
                 all_received = {k: v for k, v in all_received.items() if v.get('timestamp', 0) <= end_time}
+            
+            duration = (end_time - start_time) if (start_time is not None and end_time is not None) else -1
 
             stats = {
                 'total_sent': len(all_sent),
@@ -213,9 +217,15 @@ class GameNetAPI:
                 'reliable_received': sum(1 for p in all_received.values() if p.get('reliable', True)),
                 'unreliable_sent': sum(1 for p in all_sent.values() if not p.get('reliable', True)),
                 'unreliable_received': sum(1 for p in all_received.values() if not p.get('reliable', True)),
-                'overall_delivery_ratio': 0.0,
                 'reliable_delivery_ratio': 0.0,
                 'unreliable_delivery_ratio': 0.0,
+
+                ### stats required to present
+                'overall_delivery_ratio': 0.0,
+                'average_latency_ms': statistics.mean([p['latency'] for p in all_received.values()]) if all_received else 0.0,
+                'jitter_ms': self._compute_jitter([p['latency'] for p in all_received.values()]) if len(all_received) >= 2 else 0.0,
+                'throughput': (sum(p['size'] for p in all_received.values()) / duration) if duration > 0 else 0.0,
+
                 'lost_packets': []
             }
             
@@ -237,6 +247,18 @@ class GameNetAPI:
                     })
             
             return stats
+    
+    def _compute_jitter(self, latencies):
+        # As per RFC 3550, J(i) = J(i-1) + (|D(i-1,i)| - J(i-1))/16
+        if len(latencies) < 2:
+            return 0.0
+
+        J = 0.0
+        for i in range(1, len(latencies)):
+            D = abs(latencies[i] - latencies[i - 1])
+            J += (D - J) / 16
+
+        return J
     
     def _load_tracking_data(self):
         """Load packet tracking data from files."""
