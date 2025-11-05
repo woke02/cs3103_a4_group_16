@@ -280,6 +280,17 @@ class HUDPApp:
                                         width=10)
         self.interval_entry.grid(row=0, column=4, padx=5, pady=5)
 
+        # Experiment control buttons
+        self.btn_start_experiment = ttk.Button(
+            control_frame, text="Start Experiment", command=self.start_experiment,
+            state="disabled")
+        self.btn_start_experiment.grid(row=0, column=5, padx=5, pady=5)
+
+        self.btn_end_experiment = ttk.Button(
+            control_frame, text="End Experiment", command=self.end_experiment,
+            state="disabled")
+        self.btn_end_experiment.grid(row=0, column=6, padx=5, pady=5)
+
     def create_payload_frame(self, parent: ttk.Frame):
         """Creates the payload configuration frame."""
         payload_frame = ttk.LabelFrame(parent, text="3. Payload Configuration",
@@ -578,11 +589,17 @@ class HUDPApp:
             if self.role == 'sender':
                 self.btn_start.config(state="normal")
                 self.btn_send_one.config(state="normal")
+                # Enable Start Experiment button for sender
+                self.btn_start_experiment.config(state="normal")
+                self.btn_end_experiment.config(state="disabled")
             else:
                 # Receiver doesn't need start/stop buttons
                 self.btn_start.config(state="disabled")
                 self.btn_stop.config(state="disabled")
                 self.btn_send_one.config(state="disabled")
+                # Keep experiment buttons disabled for receiver
+                self.btn_start_experiment.config(state="disabled")
+                self.btn_end_experiment.config(state="disabled")
                 # Auto-start receiver (it runs continuously)
                 self.start_receiver()
 
@@ -616,7 +633,6 @@ class HUDPApp:
         if self.sender_thread:
             logging.info("Stopping sender...")
 
-        self.api.log_experiment(start=False)
         self.running = False
 
         # Update button states with visual feedback
@@ -693,13 +709,28 @@ class HUDPApp:
             logging.error(f"Failed to send packet: {e}")
             messagebox.showerror("Send Error", f"Failed to send packet:\n{e}")
 
+    def start_experiment(self):
+        """Handles the Start Experiment button click."""
+        self.api.log_experiment(start=True)
+        
+        # Disable Start Experiment, enable End Experiment
+        self.btn_start_experiment.config(state="disabled")
+        self.btn_end_experiment.config(state="normal")
+
+    def end_experiment(self):
+        """Handles the End Experiment button click."""
+        self.api.log_experiment(start=False)
+        
+        # Enable Start Experiment, disable End Experiment
+        self.btn_start_experiment.config(state="normal")
+        self.btn_end_experiment.config(state="disabled")
+
     # ========================================================================
     # ========================================================================
 
     def start_sender(self):
         """Starts the sender loop in a separate thread."""
         self.running = True
-        self.api.log_experiment(start=True)
 
         # Reset start time only if this is the first start (not a resume)
         if self.stats['start_time'] is None:
