@@ -187,7 +187,7 @@ class GameNetAPI:
         
         self.delivery_queue.put(packet_info)
     
-    def get_delivery_stats(self):
+    def get_delivery_stats(self, start_time=None, end_time=None):
         """
         Calculate packet delivery statistics.
         
@@ -197,7 +197,15 @@ class GameNetAPI:
         with self.tracking_lock:
             all_sent = self._load_sent_packets_global()
             all_received = self._load_received_packets_global()
+
+            if start_time is not None:
+                all_sent = {k: v for k, v in all_sent.items() if v.get('timestamp', 0) >= start_time}
+                all_received = {k: v for k, v in all_received.items() if v.get('timestamp', 0) >= start_time}
             
+            if end_time is not None:
+                all_sent = {k: v for k, v in all_sent.items() if v.get('timestamp', 0) <= end_time}
+                all_received = {k: v for k, v in all_received.items() if v.get('timestamp', 0) <= end_time}
+
             stats = {
                 'total_sent': len(all_sent),
                 'total_received': len(all_received),
@@ -339,3 +347,22 @@ class GameNetAPI:
         
         self.socket.close()
         print("[GAME_NET_API] Closed")
+
+    def log_experiment(self, start=True):
+        tracking_dir = 'packet_tracking'
+        assert self.role == 'sender', "log_experiment can only be called by sender"
+
+        if start:
+            self.start_time = time.time()
+        else:
+            self.end_time = time.time()
+
+            # when ending, log results in between start and end time
+            try:    
+                stats = self.get_delivery_stats(start_time=self.start_time, end_time=self.end_time)
+                results_file = os.path.join(tracking_dir, 'experiment_results.json')
+                with open(results_file, 'w') as f:
+                    json.dump(stats, f, indent=2)
+                    
+            except IOError:
+                pass

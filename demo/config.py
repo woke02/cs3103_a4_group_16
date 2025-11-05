@@ -160,7 +160,7 @@ WINDOW_HEIGHT = 1000
 
 # Color scheme for log levels
 LOG_COLORS = {
-    "INFO": "white",
+    "INFO": "black",
     "WARNING": "orange",
     "ERROR": "red",
     "DEBUG": "cyan",

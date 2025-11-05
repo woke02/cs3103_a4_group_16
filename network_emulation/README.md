@@ -32,7 +32,7 @@
 
 ### TC7. High delay
 - **Loss:** 1%
-- **Delay:** 150ms
+- **Delay:** 200ms
 - **Jitter:** 4ms
 
 ### TC8. High jitter

@@ -616,6 +616,7 @@ class HUDPApp:
         if self.sender_thread:
             logging.info("Stopping sender...")
 
+        self.api.log_experiment(start=False)
         self.running = False
 
         # Update button states with visual feedback
@@ -698,6 +699,7 @@ class HUDPApp:
     def start_sender(self):
         """Starts the sender loop in a separate thread."""
         self.running = True
+        self.api.log_experiment(start=True)
 
         # Reset start time only if this is the first start (not a resume)
         if self.stats['start_time'] is None:
