@@ -38,7 +38,7 @@
 ### TC8. High jitter
 - **Loss:** 1%
 - **Delay:** 20ms
-- **Jitter:** 20ms
+- **Jitter:** 50ms
 
 
 ## Run tests
@@ -51,8 +51,8 @@
 - Root/sudo privileges
 
 **Usage**:
-- `sudo ./linux_netem_commands.sh tcx`, `tcx` e.g. `tc1`
-- `sudo ./linux_netem_commands.sh reset`
+- `sudo ./linux_netem_simulation.sh tcx`, `tcx` e.g. `tc1`
+- `sudo ./linux_netem_simulation reset`
 
 ### Windows
 

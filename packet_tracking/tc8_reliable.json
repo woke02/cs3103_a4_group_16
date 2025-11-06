@@ -1,0 +1,26 @@
+{
+  "total_sent": 507,
+  "total_received": 505,
+  "reliable_sent": 507,
+  "reliable_received": 505,
+  "unreliable_sent": 0,
+  "unreliable_received": 0,
+  "reliable_delivery_ratio": 99.60552268244575,
+  "unreliable_delivery_ratio": 0.0,
+  "overall_delivery_ratio": 99.60552268244575,
+  "average_latency_ms": 30.41782178217822,
+  "jitter_ms": 26.46911746466601,
+  "throughput": 3507.9896062388434,
+  "lost_packets": [
+    {
+      "seq_no": 2340,
+      "reliable": true,
+      "timestamp": 1762415113.831228
+    },
+    {
+      "seq_no": 2831,
+      "reliable": true,
+      "timestamp": 1762415143.0389252
+    }
+  ]
+}

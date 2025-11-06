@@ -35,7 +35,6 @@ scenario_tc2() {
         loss 0.1% \
         delay 5ms 1ms \
         limit 1000
-    show_settings
 }
 
 scenario_tc3() {
@@ -45,7 +44,6 @@ scenario_tc3() {
         loss 1% \
         delay 20ms 4ms \
         limit 1000
-    show_settings
 }
 
 scenario_tc4() {
@@ -55,7 +53,6 @@ scenario_tc4() {
         loss 2% \
         delay 50ms 10ms \
         limit 1000
-    show_settings
 }
 
 scenario_tc5() {
@@ -65,7 +62,6 @@ scenario_tc5() {
         loss 5% \
         delay 100ms 20ms \
         limit 1000
-    show_settings
 }
 
 scenario_tc6() {
@@ -75,27 +71,24 @@ scenario_tc6() {
         loss 50% \
         delay 20ms 4ms \
         limit 1000
-    show_settings
 }
 
 scenario_tc7() {
     echo "Applying: TC7 - High delay"
-    echo "  Loss: 1%, Delay: 150ms, Jitter: 4ms"
+    echo "  Loss: 1%, Delay: 200ms, Jitter: 4ms"
     tc qdisc add dev $INTERFACE root netem \
         loss 1% \
-        delay 150ms 4ms \
+        delay 200ms 4ms \
         limit 1000
-    show_settings
 }
 
 scenario_tc8() {
     echo "Applying: TC8 - High jitter"
-    echo "  Loss: 1%, Delay: 20ms, Jitter: 20ms"
+    echo "  Loss: 1%, Delay: 20ms, Jitter: 50ms"
     tc qdisc add dev $INTERFACE root netem \
         loss 1% \
-        delay 20ms 20ms \
+        delay 20ms 50ms \
         limit 1000
-    show_settings
 }
 
 # Main script logic
@@ -135,4 +128,4 @@ esac
 
 echo ""
 echo "Done!"
-echo "Remember to run 'sudo ./linux_netem_commands.sh reset' when finished testing"
+echo "Remember to run 'sudo ./linux_netem_simulation.sh reset' when finished testing"

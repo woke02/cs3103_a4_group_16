@@ -1,0 +1,151 @@
+{
+  "total_sent": 497,
+  "total_received": 472,
+  "reliable_sent": 0,
+  "reliable_received": 0,
+  "unreliable_sent": 497,
+  "unreliable_received": 472,
+  "reliable_delivery_ratio": 0.0,
+  "unreliable_delivery_ratio": 94.96981891348088,
+  "overall_delivery_ratio": 94.96981891348088,
+  "average_latency_ms": 101.70762711864407,
+  "jitter_ms": 11.366234954419049,
+  "throughput": 3262.6515998753607,
+  "lost_packets": [
+    {
+      "seq_no": 35,
+      "reliable": false,
+      "timestamp": 1762414631.9211795
+    },
+    {
+      "seq_no": 48,
+      "reliable": false,
+      "timestamp": 1762414632.680562
+    },
+    {
+      "seq_no": 50,
+      "reliable": false,
+      "timestamp": 1762414632.793677
+    },
+    {
+      "seq_no": 63,
+      "reliable": false,
+      "timestamp": 1762414633.534769
+    },
+    {
+      "seq_no": 142,
+      "reliable": false,
+      "timestamp": 1762414638.101512
+    },
+    {
+      "seq_no": 178,
+      "reliable": false,
+      "timestamp": 1762414640.2118185
+    },
+    {
+      "seq_no": 179,
+      "reliable": false,
+      "timestamp": 1762414640.2717984
+    },
+    {
+      "seq_no": 256,
+      "reliable": false,
+      "timestamp": 1762414644.9231925
+    },
+    {
+      "seq_no": 273,
+      "reliable": false,
+      "timestamp": 1762414645.942986
+    },
+    {
+      "seq_no": 286,
+      "reliable": false,
+      "timestamp": 1762414646.750653
+    },
+    {
+      "seq_no": 298,
+      "reliable": false,
+      "timestamp": 1762414647.451688
+    },
+    {
+      "seq_no": 302,
+      "reliable": false,
+      "timestamp": 1762414647.7020257
+    },
+    {
+      "seq_no": 325,
+      "reliable": false,
+      "timestamp": 1762414649.133187
+    },
+    {
+      "seq_no": 347,
+      "reliable": false,
+      "timestamp": 1762414650.5086417
+    },
+    {
+      "seq_no": 355,
+      "reliable": false,
+      "timestamp": 1762414651.0304303
+    },
+    {
+      "seq_no": 360,
+      "reliable": false,
+      "timestamp": 1762414651.333343
+    },
+    {
+      "seq_no": 367,
+      "reliable": false,
+      "timestamp": 1762414651.7512927
+    },
+    {
+      "seq_no": 370,
+      "reliable": false,
+      "timestamp": 1762414651.9288654
+    },
+    {
+      "seq_no": 372,
+      "reliable": false,
+      "timestamp": 1762414652.044267
+    },
+    {
+      "seq_no": 380,
+      "reliable": false,
+      "timestamp": 1762414652.5273905
+    },
+    {
+      "seq_no": 384,
+      "reliable": false,
+      "timestamp": 1762414652.7693188
+    },
+    {
+      "seq_no": 417,
+      "reliable": false,
+      "timestamp": 1762414654.8483894
+    },
+    {
+      "seq_no": 442,
+      "reliable": false,
+      "timestamp": 1762414656.4309914
+    },
+    {
+      "seq_no": 449,
+      "reliable": false,
+      "timestamp": 1762414656.8766868
+    },
+    {
+      "seq_no": 450,
+      "reliable": false,
+      "timestamp": 1762414656.9376578
+    },
+    {
+      "seq_no": 464,
+      "reliable": false,
+      "timestamp": 1762414657.9255064
+    },
+    {
+      "seq_no": 517,
+      "reliable": false,
+      "timestamp": 1762414661.2926178
+    }
+  ]
+}

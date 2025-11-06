@@ -1,0 +1,15 @@
+{
+  "total_sent": 511,
+  "total_received": 511,
+  "reliable_sent": 0,
+  "reliable_received": 0,
+  "unreliable_sent": 511,
+  "unreliable_received": 511,
+  "reliable_delivery_ratio": 0.0,
+  "unreliable_delivery_ratio": 100.0,
+  "overall_delivery_ratio": 100.0,
+  "average_latency_ms": 0.6555772994129159,
+  "jitter_ms": 0.5667204108125616,
+  "throughput": 3550.639168560933,
+  "lost_packets": []
+}
