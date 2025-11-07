@@ -17,6 +17,9 @@ class PacketInfo:
 
         """
         self.packet = packet_bytes
+        # Extract original timestamp for latency calculation
+        packet_data = pkt.decode_data_packet(packet_bytes)
+        self.original_timestamp = packet_data['timestamp']
         self.first_send_time = time.time()
         self.last_send_time = self.first_send_time
         self.retry_count = 0
@@ -161,7 +164,15 @@ class SRSender:
                 pkt_info.retry_count += 1
                 pkt_info.last_send_time = time.time()
                 
-                self.socket.sendto(pkt_info.packet, self.remote_addr)
+                # Re-encode with original timestamp for correct latency calculation
+                packet_data = pkt.decode_data_packet(pkt_info.packet)
+                retransmit_bytes = pkt.encode_data_packet(
+                    packet_data['channel_type'],
+                    packet_data['seq_no'],
+                    packet_data['payload'],
+                    timestamp=pkt_info.original_timestamp  # Use original timestamp
+                )
+                self.socket.sendto(retransmit_bytes, self.remote_addr)
                 
                 elapsed = time.time() - pkt_info.first_send_time
                 print(f"[SR_SENDER] RETRY seq={seq_no} (attempt={pkt_info.retry_count}, elapsed={elapsed*1000:.0f}ms)")
