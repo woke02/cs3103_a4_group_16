@@ -44,13 +44,13 @@ def plot_all_metrics_grid(results, test_case_range, filename_suffix):
         ('throughput', 'Throughput (byte/s)', 'Throughput')
     ]
     
-    fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+    fig, axes = plt.subplots(2, 2, figsize=(16, 9))
     
     for idx, (metric_key, ylabel, title) in enumerate(metrics):
         ax = axes[idx // 2, idx % 2]
         
-        reliable_values = [results['reliable'][tc].get(metric_key, 0) for tc in test_cases]
-        unreliable_values = [results['unreliable'][tc].get(metric_key, 0) for tc in test_cases]
+        reliable_values = [int(results['reliable'][tc].get(metric_key, 0)) if metric_key == 'throughput' else results['reliable'][tc].get(metric_key, 0) for tc in test_cases]
+        unreliable_values = [int(results['unreliable'][tc].get(metric_key, 0)) if metric_key == 'throughput' else results['unreliable'][tc].get(metric_key, 0) for tc in test_cases]
         
         x = np.arange(len(test_cases))
         width = 0.35
@@ -60,11 +60,11 @@ def plot_all_metrics_grid(results, test_case_range, filename_suffix):
         bars2 = ax.bar(x + width/2, unreliable_values, width, label='Unreliable', 
                        alpha=0.8, color='#A23B72')
         
-        ax.set_ylabel(ylabel, fontsize=11, fontweight='bold')
-        ax.set_title(title, fontsize=12, fontweight='bold', pad=10)
+        ax.set_ylabel(ylabel, fontsize=16, fontweight='bold')
+        ax.set_title(title, fontsize=16, fontweight='bold', pad=10)
         ax.set_xticks(x)
         ax.set_xticklabels([f'TC{tc}' for tc in test_cases])
-        ax.legend(fontsize=10)
+        ax.legend(fontsize=14)
         ax.grid(axis='y', alpha=0.3, linestyle='--')
         
         # Add value labels on bars for better readability
@@ -73,8 +73,8 @@ def plot_all_metrics_grid(results, test_case_range, filename_suffix):
                 height = bar.get_height()
                 if height > 0:
                     ax.text(bar.get_x() + bar.get_width()/2., height,
-                           f'{height:.1f}',
-                           ha='center', va='bottom', fontsize=7)
+                           f'{height:.0f}' if metric_key == 'throughput' else f'{height:.1f}',
+                           ha='center', va='bottom', fontsize=12)
     
     plt.tight_layout()
     output_filename = f'all_metrics_comparison_{filename_suffix}.png'
