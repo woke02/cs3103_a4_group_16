@@ -1,26 +1,21 @@
 {
-  "total_sent": 451,
-  "total_received": 451,
-  "reliable_sent": 451,
-  "reliable_received": 451,
+  "total_sent": 436,
+  "total_received": 436,
+  "reliable_sent": 436,
+  "reliable_received": 436,
   "unreliable_sent": 0,
   "unreliable_received": 0,
-  "reliable_delivery_ratio": 100.0,
+  "reliable_delivery_ratio": 100,
   "unreliable_delivery_ratio": 0.0,
-  "overall_delivery_ratio": 100.0,
-  "average_latency_ms": 128.2572062084257,
-  "jitter_ms": 20.335557837280597,
-  "throughput": 3132.2430786221407,
+  "overall_delivery_ratio": 100,
+  "average_latency_ms": 102.95423340961098,
+  "jitter_ms": 14.710197318045187,
+  "throughput": 3020.2076803874384,
   "lost_packets": [
     {
-      "seq_no": 469,
+      "seq_no": 945,
       "reliable": true,
-      "timestamp": 1762414721.7925785
-    },
-    {
-      "seq_no": 596,
-      "reliable": true,
-      "timestamp": 1762414730.770935
+      "timestamp": 1762525457.7214973
     }
   ]
 }

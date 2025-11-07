@@ -1,46 +1,41 @@
 {
-  "total_sent": 519,
-  "total_received": 513,
+  "total_sent": 526,
+  "total_received": 523,
   "reliable_sent": 0,
   "reliable_received": 0,
-  "unreliable_sent": 519,
-  "unreliable_received": 513,
+  "unreliable_sent": 526,
+  "unreliable_received": 523,
   "reliable_delivery_ratio": 0.0,
-  "unreliable_delivery_ratio": 98.84393063583815,
-  "overall_delivery_ratio": 98.84393063583815,
-  "average_latency_ms": 26.57504873294347,
-  "jitter_ms": 21.99246534470498,
-  "throughput": 3547.387609952577,
+  "unreliable_delivery_ratio": 99.42965779467681,
+  "overall_delivery_ratio": 99.42965779467681,
+  "average_latency_ms": 26.206500956022946,
+  "jitter_ms": 32.80796953530284,
+  "throughput": 3592.413965584234,
   "lost_packets": [
     {
-      "seq_no": 1903,
+      "seq_no": 762,
       "reliable": false,
-      "timestamp": 1762415214.0142748
+      "timestamp": 1762526585.6567624
     },
     {
-      "seq_no": 1942,
+      "seq_no": 934,
       "reliable": false,
-      "timestamp": 1762415216.181741
+      "timestamp": 1762526595.6082618
     },
     {
-      "seq_no": 1966,
+      "seq_no": 1017,
       "reliable": false,
-      "timestamp": 1762415217.5367615
+      "timestamp": 1762526600.4084997
     },
     {
-      "seq_no": 2049,
+      "seq_no": 1100,
       "reliable": false,
-      "timestamp": 1762415222.3005004
+      "timestamp": 1762526605.3219786
     },
     {
-      "seq_no": 2137,
+      "seq_no": 1164,
       "reliable": false,
-      "timestamp": 1762415227.4306064
-    },
-    {
-      "seq_no": 2161,
-      "reliable": false,
-      "timestamp": 1762415228.795166
+      "timestamp": 1762526609.1080458
     }
   ]
 }

@@ -1,81 +1,61 @@
 {
-  "total_sent": 518,
-  "total_received": 506,
+  "total_sent": 475,
+  "total_received": 467,
   "reliable_sent": 0,
   "reliable_received": 0,
-  "unreliable_sent": 518,
-  "unreliable_received": 506,
+  "unreliable_sent": 475,
+  "unreliable_received": 467,
   "reliable_delivery_ratio": 0.0,
-  "unreliable_delivery_ratio": 97.68339768339769,
-  "overall_delivery_ratio": 97.68339768339769,
-  "average_latency_ms": 51.74505928853755,
-  "jitter_ms": 7.356162154778111,
-  "throughput": 3505.120994343185,
+  "unreliable_delivery_ratio": 98.3157894736842,
+  "overall_delivery_ratio": 98.3157894736842,
+  "average_latency_ms": 51.92505353319058,
+  "jitter_ms": 7.224150947350024,
+  "throughput": 3242.564314707404,
   "lost_packets": [
     {
-      "seq_no": 1882,
+      "seq_no": 1852,
       "reliable": false,
-      "timestamp": 1762414240.1097333
+      "timestamp": 1762525719.744523
     },
     {
-      "seq_no": 1890,
+      "seq_no": 1892,
       "reliable": false,
-      "timestamp": 1762414240.563869
+      "timestamp": 1762525722.203119
     },
     {
-      "seq_no": 1905,
+      "seq_no": 2005,
       "reliable": false,
-      "timestamp": 1762414241.4140239
+      "timestamp": 1762525729.4772024
     },
     {
-      "seq_no": 1925,
+      "seq_no": 2060,
       "reliable": false,
-      "timestamp": 1762414242.5268345
+      "timestamp": 1762525732.9464371
     },
     {
-      "seq_no": 1974,
+      "seq_no": 2102,
       "reliable": false,
-      "timestamp": 1762414245.315727
+      "timestamp": 1762525735.6015086
     },
     {
-      "seq_no": 2023,
+      "seq_no": 2119,
       "reliable": false,
-      "timestamp": 1762414248.1237106
+      "timestamp": 1762525736.7049139
     },
     {
-      "seq_no": 2113,
+      "seq_no": 2181,
       "reliable": false,
-      "timestamp": 1762414253.3457756
+      "timestamp": 1762525740.6850057
     },
     {
-      "seq_no": 2128,
+      "seq_no": 2214,
       "reliable": false,
-      "timestamp": 1762414254.21435
+      "timestamp": 1762525742.7840824
     },
     {
-      "seq_no": 2264,
+      "seq_no": 2234,
       "reliable": false,
-      "timestamp": 1762414262.2952304
-    },
-    {
-      "seq_no": 2311,
-      "reliable": false,
-      "timestamp": 1762414265.0989578
-    },
-    {
-      "seq_no": 2342,
-      "reliable": false,
-      "timestamp": 1762414267.036031
-    },
-    {
-      "seq_no": 2344,
-      "reliable": false,
-      "timestamp": 1762414267.155057
-    },
-    {
-      "seq_no": 2348,
-      "reliable": false,
-      "timestamp": 1762414267.4020627
+      "timestamp": 1762525744.0520935
     }
   ]
 }

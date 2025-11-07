@@ -1,15 +1,15 @@
 {
-  "total_sent": 479,
-  "total_received": 479,
-  "reliable_sent": 479,
-  "reliable_received": 479,
+  "total_sent": 490,
+  "total_received": 490,
+  "reliable_sent": 490,
+  "reliable_received": 490,
   "unreliable_sent": 0,
   "unreliable_received": 0,
   "reliable_delivery_ratio": 100.0,
   "unreliable_delivery_ratio": 0.0,
   "overall_delivery_ratio": 100.0,
-  "average_latency_ms": 0.6430062630480167,
-  "jitter_ms": 0.7699159420512343,
-  "throughput": 3334.1272460483683,
+  "average_latency_ms": 0.6040816326530613,
+  "jitter_ms": 0.6658070153622788,
+  "throughput": 3371.311837419291,
   "lost_packets": []
 }

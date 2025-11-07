@@ -1,151 +1,151 @@
 {
-  "total_sent": 497,
-  "total_received": 472,
+  "total_sent": 526,
+  "total_received": 501,
   "reliable_sent": 0,
   "reliable_received": 0,
-  "unreliable_sent": 497,
-  "unreliable_received": 472,
+  "unreliable_sent": 526,
+  "unreliable_received": 501,
   "reliable_delivery_ratio": 0.0,
-  "unreliable_delivery_ratio": 94.96981891348088,
-  "overall_delivery_ratio": 94.96981891348088,
-  "average_latency_ms": 101.70762711864407,
-  "jitter_ms": 11.366234954419049,
-  "throughput": 3262.6515998753607,
+  "unreliable_delivery_ratio": 95.24714828897338,
+  "overall_delivery_ratio": 95.24714828897338,
+  "average_latency_ms": 100.30938123752495,
+  "jitter_ms": 12.04463709795811,
+  "throughput": 3443.063913807801,
   "lost_packets": [
     {
-      "seq_no": 35,
+      "seq_no": 609,
       "reliable": false,
-      "timestamp": 1762414631.9211795
+      "timestamp": 1762525494.7849977
     },
     {
-      "seq_no": 48,
+      "seq_no": 611,
       "reliable": false,
-      "timestamp": 1762414632.680562
+      "timestamp": 1762525494.8947778
     },
     {
-      "seq_no": 50,
+      "seq_no": 622,
       "reliable": false,
-      "timestamp": 1762414632.793677
+      "timestamp": 1762525495.5223932
     },
     {
-      "seq_no": 63,
+      "seq_no": 649,
       "reliable": false,
-      "timestamp": 1762414633.534769
+      "timestamp": 1762525497.0159302
     },
     {
-      "seq_no": 142,
+      "seq_no": 677,
       "reliable": false,
-      "timestamp": 1762414638.101512
+      "timestamp": 1762525498.5608203
     },
     {
-      "seq_no": 178,
+      "seq_no": 693,
       "reliable": false,
-      "timestamp": 1762414640.2118185
+      "timestamp": 1762525499.482448
     },
     {
-      "seq_no": 179,
+      "seq_no": 721,
       "reliable": false,
-      "timestamp": 1762414640.2717984
+      "timestamp": 1762525501.0137658
     },
     {
-      "seq_no": 256,
+      "seq_no": 741,
       "reliable": false,
-      "timestamp": 1762414644.9231925
+      "timestamp": 1762525502.1245415
     },
     {
-      "seq_no": 273,
+      "seq_no": 744,
       "reliable": false,
-      "timestamp": 1762414645.942986
+      "timestamp": 1762525502.2917383
     },
     {
-      "seq_no": 286,
+      "seq_no": 750,
       "reliable": false,
-      "timestamp": 1762414646.750653
+      "timestamp": 1762525502.6205122
     },
     {
-      "seq_no": 298,
+      "seq_no": 762,
       "reliable": false,
-      "timestamp": 1762414647.451688
+      "timestamp": 1762525503.2751534
     },
     {
-      "seq_no": 302,
+      "seq_no": 766,
       "reliable": false,
-      "timestamp": 1762414647.7020257
+      "timestamp": 1762525503.5040708
     },
     {
-      "seq_no": 325,
+      "seq_no": 772,
       "reliable": false,
-      "timestamp": 1762414649.133187
+      "timestamp": 1762525503.8614392
     },
     {
-      "seq_no": 347,
+      "seq_no": 818,
       "reliable": false,
-      "timestamp": 1762414650.5086417
+      "timestamp": 1762525506.429734
     },
     {
-      "seq_no": 355,
+      "seq_no": 824,
       "reliable": false,
-      "timestamp": 1762414651.0304303
+      "timestamp": 1762525506.7673512
     },
     {
-      "seq_no": 360,
+      "seq_no": 867,
       "reliable": false,
-      "timestamp": 1762414651.333343
+      "timestamp": 1762525509.2856152
     },
     {
-      "seq_no": 367,
+      "seq_no": 931,
       "reliable": false,
-      "timestamp": 1762414651.7512927
+      "timestamp": 1762525513.0263548
     },
     {
-      "seq_no": 370,
+      "seq_no": 950,
       "reliable": false,
-      "timestamp": 1762414651.9288654
+      "timestamp": 1762525514.1625004
     },
     {
-      "seq_no": 372,
+      "seq_no": 954,
       "reliable": false,
-      "timestamp": 1762414652.044267
+      "timestamp": 1762525514.4119906
     },
     {
-      "seq_no": 380,
+      "seq_no": 1006,
       "reliable": false,
-      "timestamp": 1762414652.5273905
+      "timestamp": 1762525517.4447896
     },
     {
-      "seq_no": 384,
+      "seq_no": 1019,
       "reliable": false,
-      "timestamp": 1762414652.7693188
+      "timestamp": 1762525518.1865351
     },
     {
-      "seq_no": 417,
+      "seq_no": 1024,
       "reliable": false,
-      "timestamp": 1762414654.8483894
+      "timestamp": 1762525518.4765346
     },
     {
-      "seq_no": 442,
+      "seq_no": 1087,
       "reliable": false,
-      "timestamp": 1762414656.4309914
+      "timestamp": 1762525522.2638326
     },
     {
-      "seq_no": 449,
+      "seq_no": 1106,
       "reliable": false,
-      "timestamp": 1762414656.8766868
+      "timestamp": 1762525523.4373248
     },
     {
-      "seq_no": 450,
+      "seq_no": 1126,
       "reliable": false,
-      "timestamp": 1762414656.9376578
+      "timestamp": 1762525524.6939824
     },
     {
-      "seq_no": 464,
+      "seq_no": 1133,
       "reliable": false,
-      "timestamp": 1762414657.9255064
+      "timestamp": 1762525525.1127741
     },
     {
-      "seq_no": 517,
+      "seq_no": 1134,
       "reliable": false,
-      "timestamp": 1762414661.2926178
+      "timestamp": 1762525525.1739736
     }
   ]
 }
