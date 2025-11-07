@@ -8,18 +8,20 @@ Clumsy operates at the WinDivert driver level to intercept and manipulate networ
 2. Run as Administrator
 3. Allow it in firewall / antivirus software
 
-
 ## Setup
 
 1. **Filter:**
+
    - Default: all packets
    - Examples:
-     ```
+
+     ```bash
      udp and (ip.DstAddr == 127.0.0.1 or ip.SrcAddr == 127.0.0.1)
      udp.DstPort == 6000 or udp.SrcPort == 6000
      ```
 
 2. **Checkboxes:**
+
    - **Lag**: Add delay to packets
    - **Drop**: Drop packets (loss)
    - **Throttle**: Limit bandwidth

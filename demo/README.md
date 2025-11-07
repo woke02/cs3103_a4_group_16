@@ -2,6 +2,11 @@
 
 This directory contains demo applications for testing the H-UDP protocol.
 
+## Requirements
+
+- Python 3.12
+- Tkinter 8.6
+
 ## Quick Start
 
 ### GUI Demo (Recommended)
