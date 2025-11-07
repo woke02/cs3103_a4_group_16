@@ -55,7 +55,7 @@ The GUI now allows configuring network parameters directly during initialization
 - **Remote Host**: Target hostname/IP for sender (default: localhost)
 - **Remote Port**: Target port for sender (default: 6000)
 - **Sender Timeout**: Retry interval for reliable packets in milliseconds (default: 200ms)
-- **Receiver Timeout**: Skip timeout for missing packets in milliseconds (default: 450ms)
+- **Receiver Timeout**: Skip timeout for missing packets in milliseconds (default: 200ms)
 - **Log Level**: Logging verbosity level - DEBUG, INFO, WARNING, or ERROR (default: INFO)
 
 **Important**: All configuration fields are **locked after initialization** to ensure consistency during the session.
@@ -63,7 +63,7 @@ The GUI now allows configuring network parameters directly during initialization
 ### Default Configuration (in `config.py`)
 
 - Network ports (default: 5000 sender, 6000 receiver)
-- Protocol timeouts (sender: 200ms, receiver: 450ms)
+- Protocol timeouts (sender: 200ms, receiver: 200ms)
 - Packet sending interval (default: 500ms)
 - Payload presets
 
@@ -113,4 +113,3 @@ sudo apt-get install python3-tk
 8. **Monitor the logs** to understand protocol behavior (ACKs, retransmissions, buffering)
 9. **Full Log** is always saved to the log file specified before initialization
 10. **Clear & Save Logs** buttons help log management for different scenarios during testing (i.e., changing payload types)
-11. **Timeout values**: Receiver timeout should be > Sender timeout × 2 to accommodate retries
