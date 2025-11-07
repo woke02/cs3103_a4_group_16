@@ -3,8 +3,8 @@ import threading
 from . import packet as pkt
 
 WINDOW_SIZE = 32
-RETRY_INTERVAL = 0.200
-MAX_RETRIES = 1
+RETRY_INTERVAL = 0.020
+TIMEOUT = 0.200
 
 
 class PacketInfo:
@@ -141,10 +141,11 @@ class SRSender:
                 return
             
             pkt_info = self.send_buffer[seq_no]
-            
-            if pkt_info.retry_count >= MAX_RETRIES:
-                elapsed = time.time() - pkt_info.first_send_time
-                print(f"[SR_SENDER] SKIP seq={seq_no} (max retries reached, elapsed={elapsed*1000:.0f}ms)")
+
+            elapsed = time.time() - pkt_info.first_send_time
+
+            if elapsed >= TIMEOUT:
+                print(f"[SR_SENDER] SKIP seq={seq_no} (sender timeout, elapsed={elapsed*1000:.0f}ms)")
                 
                 pkt_info.skipped = True
                 
