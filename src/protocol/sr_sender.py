@@ -177,7 +177,7 @@ class SRSender:
                 elapsed = time.time() - pkt_info.first_send_time
                 print(f"[SR_SENDER] RETRY seq={seq_no} (attempt={pkt_info.retry_count}, elapsed={elapsed*1000:.0f}ms)")
                 
-                timer = threading.Timer(self.sender_timeout, self._on_timeout, args=[seq_no])
+                timer = threading.Timer(RETRY_INTERVAL, self._on_timeout, args=[seq_no])
                 timer.daemon = True
                 timer.start()
                 self.timers[seq_no] = timer
